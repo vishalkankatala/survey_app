@@ -13,8 +13,10 @@ export class SurveySignupComponent implements OnInit {
 	surveys:Survey[];
 	formGroup: FormGroup;
 	createSucceeded: boolean=false;	
+	exampleUrl:string="assets/example-js.png";
 	
   constructor(private surveyService: SurveysService) { 
+
 	}
 
   	ngOnInit() {
