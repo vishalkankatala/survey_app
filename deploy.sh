@@ -1,6 +1,6 @@
 #! /bin/bash
 
-virtualenv .surveyApp
+virtualenv -p /usr/bin/python2.7 .surveyApp
 
 source .surveyApp/bin/activate
 
