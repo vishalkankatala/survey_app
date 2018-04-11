@@ -1,0 +1,59 @@
+{
+	"AWSTemplateFormatVersion": "2010-09-09",
+	"Resources": {
+		"AutoScalingGroup": {
+			"Type": "AWS::AutoScaling::AutoScalingGroup",
+			"DeletionPolicy":"Retain",
+			"CreationPolicy": {
+				"ResourceSignal": {
+					"Count": 2,
+					"Timeout": "PT5M"
+				}
+			},
+			"Properties": {
+				"AvailabilityZones": {"Fn::GetAZs":""},
+				"LaunchConfigurationName": {"Ref":"LaunchConfiguration"},
+				"DesiredCapacity": 2,
+				"MinSize": 1,
+				"MaxSize": 3
+			}
+		},
+		"allowSSHSecurityGroup": {
+			"Type": "AWS::EC2::SecurityGroup",
+			"Properties": {
+                                         "GroupDescription": "SSH access for the instances.",
+                                         "SecurityGroupIngress": [
+                                                                        {
+                                                                                "CidrIp":"0.0.0.0/0",
+                                                                                "IpProtocol": "tcp",
+                                                                                "FromPort": "22",
+                                                                                "ToPort": "22"
+                                                                        }
+                                                                ]
+                                      }
+
+		},
+		"LaunchConfiguration": {
+			"Type": "AWS::AutoScaling::LaunchConfiguration",
+			"DeletionPolicy": "Retain",
+			"Properties": {
+				"ImageId":	"ami-ffbdd790",
+				"KeyName": "newkeypair",
+				"InstanceType": "t2.nano",
+				"SecurityGroups": [
+					{"Ref":"allowSSHSecurityGroup"}
+				],
+				"UserData": {"Fn::Base64": {"Fn::Join": ["", [
+					"#!/bin/bash -xe\n",
+					"yum install -y aws-cfn-bootstrap\n",
+					"/opt/aws/bin/cfn-signal --success true --stack ",
+					{"Ref":"AWS::StackName"},
+					" --resource AutoScalingGroup ",
+					"--region ",
+					{"Ref":"AWS::Region"},
+					"\n"	
+				]]}}															
+			}
+		}
+	}
+}

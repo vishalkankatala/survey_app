@@ -1,0 +1,60 @@
+{
+	"AWSTemplateFormatVersion": "2010-09-09",
+	"Resources": {
+		"AutoScalingGroup": {
+			"DependsOn": "sampleCustomResource",
+			"Type": "AWS::AutoScaling::AutoScalingGroup",
+			"Properties": {
+				"AvailabilityZones": {"Fn::GetAZs":""},
+				"LaunchConfigurationName": {"Ref":"LaunchConfiguration"},
+				"DesiredCapacity": 1,
+				"MinSize": 1,
+				"MaxSize": 1
+			}
+		},
+		"sampleCustomResource": {
+			"Type": "Custom::sampleLambdaResource",
+			"Properties": {
+				"ServiceToken": "arn:aws:sns:ap-south-1:116984899495:sample",
+				"Cidr": "10.0.0.0/24"
+			}
+			
+		},
+
+		"allowSSHSecurityGroup": {
+			"Type": "AWS::EC2::SecurityGroup",
+			"DependsOn": "sampleCustomResource",
+			"Properties": {
+                                         "GroupDescription": "SSH access for the instances.",
+                                         "SecurityGroupIngress": [
+                                                                        {
+                                                                                "CidrIp":"0.0.0.0/0",
+                                                                                "IpProtocol": "tcp",
+                                                                                "FromPort": "22",
+                                                                                "ToPort": "22"
+                                                                        }
+                                                                ]
+                                      }
+
+		},
+		
+		"LaunchConfiguration": {
+			"Type": "AWS::AutoScaling::LaunchConfiguration",
+			"Properties": {
+				"ImageId":	"ami-ffbdd790",
+				"KeyName": "newkeypair",
+				"InstanceType": "t2.nano",
+				"SecurityGroups": [
+					{"Ref":"allowSSHSecurityGroup"}
+				]
+			}
+		}	
+	},
+	"Outputs": {
+		"lambdaFunctionOutput": {
+			"Description": "Output from the lambda function",
+			"Value": {"Fn::GetAtt": ["sampleCustomResource", "Cidr"]}
+		}
+	}
+}
+
