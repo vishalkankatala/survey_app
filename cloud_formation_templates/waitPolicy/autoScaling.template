@@ -1,0 +1,133 @@
+{
+	"AWSTemplateFormatVersion": "2010-09-09",
+	"Resources": {
+		"AutoScalingGroup": {
+			"Type": "AWS::AutoScaling::AutoScalingGroup",
+			"Properties": {
+				"AvailabilityZones": {"Fn::GetAZs":""},
+				"LaunchConfigurationName": {"Ref":"LaunchConfiguration"},
+				"DesiredCapacity": 2,
+				"MinSize": 2,
+				"MaxSize": 2
+			}
+		},
+		"MyWaitConditionHandle": {
+			"Type":"AWS::CloudFormation::WaitConditionHandle"
+		},
+		"MyWaitCondition": {
+			"Type":"AWS::CloudFormation::WaitCondition",
+			"DependsOn": "AutoScalingGroup",
+			"Properties": {
+				"Handle": {"Ref":"MyWaitConditionHandle"},
+				"Timeout": "1300",
+				"Count": 2	
+			}
+		},
+		
+		"allowSSHSecurityGroup": {
+			"Type": "AWS::EC2::SecurityGroup",
+			"Properties": {
+                                         "GroupDescription": "SSH access for the instances.",
+                                         "SecurityGroupIngress": [
+                                                                        {
+                                                                                "CidrIp":"0.0.0.0/0",
+                                                                                "IpProtocol": "tcp",
+                                                                                "FromPort": "22",
+                                                                                "ToPort": "22"
+                                                                        }
+                                                                ]
+                                      }
+
+		},
+		"IAMRoleForCloudWatchLogsAccess": {
+			"Type": "AWS::IAM::Role",
+			"Properties": {
+				"AssumeRolePolicyDocument": {
+					"Version": "2012-10-17",
+					"Statement": [
+						{
+							"Effect": "Allow",
+							"Principal": {
+								"Service": ["ec2.amazonaws.com"]	
+							},
+							"Action": ["sts:AssumeRole"] 
+						}
+					]
+				},
+				"Path": "/"			
+			}
+		},
+		"IAMRolePolicyForCloudWatchLogs": {
+			"Type": "AWS::IAM::Policy",
+			"Properties": {
+				"PolicyName": "CloudWatchLogsAccessForEC2",
+				"PolicyDocument": {
+					"Version": "2012-10-17",
+					"Statement": [
+						{
+							"Effect": "Allow",
+							"Action": [
+								"logs:CreateLogGroup",
+								"logs:CreateLogStream",
+								"logs:PutLogEvents",
+								"logs:DescribeLogStreams"
+							],
+							"Resource": [
+									"arn:aws:logs:*:*:*"
+								]	
+						},
+						{
+							"Effect":"Allow",
+							"Action": [
+								"s3:GetObject"
+							],
+							"Resource": [
+								"arn:aws:s3:::cloudwatchconfigvishal/*"		
+							]
+						}
+					]
+				},
+				"Roles": [
+					{"Ref":"IAMRoleForCloudWatchLogsAccess"}
+				]
+			}
+		},
+		"CloudWatchLogsAccessInstanceProfile": {
+			"Type": "AWS::IAM::InstanceProfile",
+			"Properties": {
+				"Path": "/",
+				"Roles": [
+					{"Ref":"IAMRoleForCloudWatchLogsAccess"}
+				]
+			}		
+		},
+		"LaunchConfiguration": {
+			"Type": "AWS::AutoScaling::LaunchConfiguration",
+			"Properties": {
+				"ImageId":	"ami-ffbdd790",
+				"KeyName": "newkeypair",
+				"InstanceType": "t2.nano",
+				"IamInstanceProfile": {"Ref":"CloudWatchLogsAccessInstanceProfile"},
+				"SecurityGroups": [
+					{"Ref":"allowSSHSecurityGroup"}
+				],
+				"UserData": {"Fn::Base64": {"Fn::Join": ["\n", [
+					"#!/bin/bash -xe",
+					"curl https://s3.amazonaws.com//aws-cloudwatch/downloads/latest/awslogs-agent-setup.py -O",
+					"chmod +x ./awslogs-agent-setup.py",
+					"./awslogs-agent-setup.py -n -r ap-south-1 -c https://s3.ap-south-1.amazonaws.com/cloudwatchconfigvishal/cloudWatch.config",
+					{"Fn::Sub":"curl -X PUT -H 'Content-Type:application/json' --data-binary '{\"Status\":\"SUCCESS\", \"Reason\":\"config complete\", \"UniqueId\":\"ID123\", \"Data\":\"Some data\"}' \"${MyWaitConditionHandle}\""}
+				]]}}															
+			}
+		}
+	},
+	"Outputs": {
+		"SignedURLForFeedback": {
+			"Description": "Value of the signed url",
+			"Value": {
+				"Ref":"MyWaitConditionHandle"
+			}
+		}	
+	}
+}
+
