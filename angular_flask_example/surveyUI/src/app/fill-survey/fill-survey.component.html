@@ -1,0 +1,40 @@
+<div class="container" *ngIf="surveyLoaded">
+		<h1>{{currentSurvey['name']}}</h1>
+		<form [formGroup]="myForm" (ngSubmit)="onSubmit()">
+				<div class="row" *ngFor="let field of currentSurvey['fields']">
+					<div class="col-sm-4">
+						<div class="form-group">
+							<label for="{{field.name}}">{{field.name}}</label>
+								<div [ngSwitch]="field.type">
+									<div *ngSwitchCase="'string'">
+										<input id="{{field.name}}" name="{{field.name}}" formControlName="{{field.name}}" class="form-control" type="text"/>
+									</div>
+									<div *ngSwitchCase="'number'">
+										<input id="{{field.name}}" name="{{field.name}}" formControlName="{{field.name}}" class="form-control" type="number"/>
+	                                </div>
+	                                <div *ngSwitchCase="'multiple'">
+	                                	<select multiple name="{{field.name}}" formControlName="{{field.name}}">
+	                                		<option *ngFor="let option of field.optionalList" [value]="option">
+	                                		{{option}}
+	                                		</option>
+	                                	</select>
+	                                </div>
+	                                <div *ngSwitchCase="'radio'">
+	                                	<div *ngFor="let option of field.optionalList">
+	                                		<label>
+												<input id="{{field.name}}" name="{{field.name}}" formControlName="{{field.name}}" [value]="option" class="form-control" type="radio"/>
+												<span>{{option}}</span>
+											</label>
+										</div>
+	                                </div>
+								</div>
+						</div>
+					</div>
+				</div>
+			<br/><br/>
+			<button type="submit" class="btn btn-primary" [disabled]="!myForm.valid">Submit</button>
+			<div *ngIf="surveyResponseSubmitted">
+				Thanks for the response!
+			</div>
+		</form>
+</div>
