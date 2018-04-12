@@ -1,0 +1,22 @@
+import { Component, EventEmitter, Output } from '@angular/core';
+import {Recipe} from "../recipe"
+
+@Component({
+  selector: 'rb-recipe-list',
+  templateUrl: './recipe-list.component.html',
+})
+
+
+export class RecipeListComponent {
+  	@Output() recipeEventEmitter = new EventEmitter<Recipe>();
+  	recipes:Recipe[];
+  	recipe1= new Recipe("dummy","dummy","https://upload.wikimedia.org/wikipedia/commons/3/37/Small-world-network-example.png"); 
+	recipe2= new Recipe("dummy","dummy","https://upload.wikimedia.org/wikipedia/commons/3/37/Small-world-network-example.png");	
+	
+	recipes[0]=recipe1;
+	recipes[1]=recipe2;
+	
+	onSelect(selectedRecipe:Recipe){
+		this.recipeEventEmitter.emit(selectedRecipe);
+	}	
+}

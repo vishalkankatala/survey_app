@@ -1,0 +1,24 @@
+<div class="row">
+	<div class="col-xs-12">
+		<form id="shopping-list-add" (ngSubmit)="onSubmit(f.value)" #f="ngForm">
+			<div class="row">
+				<div class="col-sm-5 form-group">
+					<label for="name"></label>
+					<input type="text" id="name" name="name" required class="form-control" ngModel [value]="selectedItem.name" />
+				</div>
+				<div class="col-sm-2 form-group">
+					<label for="quantity"></label>
+					<input type="text" id="quantity" name="quantity" required class="form-control" ngModel [value]="selectedItem.quantity" />
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-12">
+					<button class="btn btn-success" type="submit" *ngIf="addMode">Add</button>
+					<button class="btn btn-primary" type="submit" *ngIf="!addMode">Edit</button>
+					<button class="btn btn-danger" type="button" *ngIf="!addMode" (click)="onDelete()">Delete</button>
+					<button class="btn btn-primary" type="button">Clear</button>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
