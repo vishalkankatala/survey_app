@@ -6,7 +6,7 @@ def loadMovieNamesFromIndexFile(movie_index_file):
     with open(movie_index_file) as index_file_object:
         for line in index_file_object:
             split_fields = line.split("|")
-            MOVIE_INDEX[split_fields[0]]=split_fields[1]
+            MOVIE_INDEX[int(split_fields[0])]=split_fields[1]
 
 def parse_ratings_line(line):
     _,movie_id,rating,_=line.split("\t")
