@@ -32,8 +32,7 @@ if __name__ == "__main__":
     top_10 = sorted_by_avg_data.take(10)
 
     for result in top_10:
-        print result
-        print "Movie Name: {} Rating: {}".format(
+        print "Movie Name: {0} Rating: {1}".format(
             MOVIE_INDEX[result[0]],
             result[1]
         )
