@@ -5,7 +5,7 @@ MOVIE_INDEX={}
 def loadMovieNamesFromIndexFile(movie_index_file):
     with open(movie_index_file) as index_file_object:
         for line in index_file_object:
-            split_fields = movie_index_file.split("|")
+            split_fields = line.split("|")
             MOVIE_INDEX[split_fields[0]]=split_fields[1]
 
 def parse_ratings_line(line):
@@ -14,7 +14,11 @@ def parse_ratings_line(line):
 
 if __name__ == "__main__":
     conf = SparkConf().setAppName("sample-app")
+
     sc=SparkContext(conf=conf)
+
+    loadMovieNamesFromIndexFile("u.item")
+
     movie_rating_text_file=sc.textFile("hdfs:///movie_data/u.data")
 
     rating_data_dss =   movie_rating_text_file.map(parse_ratings_line)
