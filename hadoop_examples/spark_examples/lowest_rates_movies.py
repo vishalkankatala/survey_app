@@ -9,12 +9,12 @@ def loadMovieNamesFromIndexFile(movie_index_file):
             MOVIE_INDEX[split_fields[0]]=split_fields[1]
 
 def parse_ratings_line(line):
-    _,movie_id,rating,_=line.split(" ")
+    _,movie_id,rating,_=line.split("\t")
     return int(movie_id),(int(rating),1)
 
 if __name__ == "__main__":
     conf = SparkConf().setAppName("sample-app")
-    sc=SparkContext(conf)
+    sc=SparkContext(conf=conf)
     movie_rating_text_file=sc.textFile("hdfs:///movie_data/u.data")
 
     rating_data_dss =   movie_rating_text_file.map(parse_ratings_line)
@@ -28,7 +28,11 @@ if __name__ == "__main__":
     top_10 = sorted_by_avg_data.take(10)
 
     for result in top_10:
-        print result
+        print "Movie Name: "+MOVIE_INDEX[result[0]] + " Rating: "+result[1]
+
+
+
+
 
 
 
