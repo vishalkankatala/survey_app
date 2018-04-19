@@ -17,7 +17,7 @@ def parse_ratings_line(line):
 	      )
 
 if __name__ == "__main__":
-	spark_session				=	SparkSession.builder.appName("Popular lowest rated movies")
+	spark_session				=	SparkSession.builder.appName("Popular lowest rated movies").getOrCreate()
 	sc					=	spark_session.sparkContext
 	lines					=	sc.textFile("hdfs:///movie_data/u.data")
 	row_objects				=	lines.map(parse_ratings_line)
@@ -26,7 +26,7 @@ if __name__ == "__main__":
 	count_ratings_for_movie			=	rating_dataframe.groupBy("movie_id").count()
 	avg_and_count_ratings			=	average_movie_rating.join(count_ratings_for_movie,"movie_id")
 	filtered_movies_by_count_and_rating	=	avg_and_count_ratings.filter(avg_and_count_ratings("count") > 100 and avg_and_count_ratings("avg(rating)") < 2.0 )
-	
+	loadMovieNamesFromIndexFile("u.item")	
 	for movie_record in filtered_movies_by_count_and_rating.collect():
 		print(MOVIE_INDEX[movie_record[0]],movie_record[1],movie_record[2])
 				
