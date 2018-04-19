@@ -25,7 +25,7 @@ if __name__ == "__main__":
 	average_movie_rating			=	rating_dataframe.groupBy("movie_id").avg("rating")
 	count_ratings_for_movie			=	rating_dataframe.groupBy("movie_id").count()
 	avg_and_count_ratings			=	average_movie_rating.join(count_ratings_for_movie,"movie_id")
-	filtered_movies_by_count_and_rating	=	avg_and_count_ratings.filter("count > 100 && avg(rating) < 2.0")
+	filtered_movies_by_count_and_rating	=	avg_and_count_ratings.filter(avg_and_count_ratings.count > 100)
 	loadMovieNamesFromIndexFile("u.item")
 	for movie_record in filtered_movies_by_count_and_rating.collect():
 		print(MOVIE_INDEX[movie_record[0]],movie_record[1],movie_record[2])
