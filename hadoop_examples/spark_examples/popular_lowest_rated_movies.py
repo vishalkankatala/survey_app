@@ -11,7 +11,10 @@ def loadMovieNamesFromIndexFile(movie_index_file):
 
 def parse_ratings_line(line):
     _,movie_id,rating,_=line.split("\t")
-    return Row(movie_id=int(movie_id),rating=(int(rating))
+    return Row(
+		movie_id=int(movie_id),
+		rating=int(rating)
+	      )
 
 if __name__ == "__main__":
 	spark_session				=	SparkSession().appBuilder("Popular lowest rated movies")
