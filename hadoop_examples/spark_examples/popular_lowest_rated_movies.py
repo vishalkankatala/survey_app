@@ -1,4 +1,4 @@
-from pyspark import SparkSession, SparkContext
+from pyspark.sql import SparkSession
 from pyspark.sql import Row
 
 MOVIE_INDEX={}
@@ -17,7 +17,7 @@ def parse_ratings_line(line):
 	      )
 
 if __name__ == "__main__":
-	spark_session				=	SparkSession().appBuilder("Popular lowest rated movies")
+	spark_session				=	SparkSession.builder.appName("Popular lowest rated movies")
 	sc					=	spark_session.sparkContext
 	lines					=	sc.textFile("hdfs:///movie_data/u.data")
 	row_objects				=	lines.map(parse_ratings_line)
