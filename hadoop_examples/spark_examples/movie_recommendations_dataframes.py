@@ -1,4 +1,4 @@
-from pyspark import SparkSession
+from pyspark.sql import SparkSession
 from pyspark.sql import Row
 from pyspark.ml.recommendation import ALS
 from pyspark.functions import lit
@@ -16,7 +16,7 @@ def loadMovieNamesFromIndexFile(movie_index_file):
             MOVIE_INDEX[int(split_fields[0])]=split_fields[1]
 
 if __name__ == "__main__":
-	spark_session	=	SparkSession().appBuilder("Recommend Movies")	
+	spark_session	=	SparkSession().builder.appName("Recommend Movies").getOrCreate()	
 
 	spark_context	=	spark_session.sparkContext
 	

@@ -14,7 +14,7 @@ def build_row_tuple_for_rating_data(line):
 	return (Row(movie_id=movie_id, rating=rating))
 
 if __name__ == "__main__":
-	spark_session = SparkSession().appBuilder("Lowest Rated Movies")
+	spark_session = SparkSession().builder.appName("Lowest Rated Movies")
 	
 	sc = spark_session.sparkContext
 

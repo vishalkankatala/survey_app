@@ -29,4 +29,4 @@ if __name__ == "__main__":
 	loadMovieNamesFromIndexFile("u.item")
 	for movie_record in sec_filtered_movies_by_count_and_rating.orderBy("avg(rating)").take(10):
 		print(MOVIE_INDEX[movie_record[0]],movie_record[1],movie_record[2])
-				
+	sc.stop()			
