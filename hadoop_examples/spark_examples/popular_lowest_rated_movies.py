@@ -27,6 +27,6 @@ if __name__ == "__main__":
 	avg_and_count_ratings			=	average_movie_rating.join(count_ratings_for_movie,"movie_id")
 	filtered_movies_by_count_and_rating	=	avg_and_count_ratings.filter("count > 100")
 	loadMovieNamesFromIndexFile("u.item")
-	for movie_record in sec_filtered_movies_by_count_and_rating.orderBy("avg(rating)").take(10):
+	for movie_record in filtered_movies_by_count_and_rating.orderBy("avg(rating)").take(10):
 		print(MOVIE_INDEX[movie_record[0]],movie_record[1],movie_record[2])
 	sc.stop()			
