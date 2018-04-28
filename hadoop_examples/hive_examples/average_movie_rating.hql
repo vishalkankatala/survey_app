@@ -1,3 +1,7 @@
+drop table if exists movie_data;
+
+drop table if exists movie_info;
+
 create table movie_data (
 	user_id int,
 	movie_id int,
