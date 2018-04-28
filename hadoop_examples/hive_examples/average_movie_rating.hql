@@ -1,5 +1,4 @@
-
-create  table if not exists movie_data (
+create table if not exists movie_data (
         user_id int,
         movie_id int,
         rating int,
@@ -7,9 +6,9 @@ create  table if not exists movie_data (
 )
 row format delimited
 fields terminated by '\t'
-stored as textfile
+stored as textfile;
 
-create  table if not exists movie_info (
+create table if not exists movie_info (
         movie_id string,
         movie_name string,
         movie_release_date string,
@@ -23,12 +22,13 @@ create  table if not exists movie_info (
 )
 row format delimited
 fields terminated by '|'
-stored as textfile
+stored as textfile;
 
 load data local inpath 'u.data' into table movie_data;
 load data local inpath 'u.item' into table movie_info;
 
-select mi.movie_name, avg(md.rating) from movie_info mi join movie_data md on (mi.movie_id=md.movie_id)
-group by md.movie_id, mi.movie_name order by avg(md.rating) desc limit 10;
+create view average_movie_ratings as
+select mi.movie_name as name, avg(md.rating) as avg_rating from movie_info mi join movie_data md on (mi.movie_id = md.movie_id)
+group by md.movie_id, mi.movie_name;
 
-
+select * from average_movie_ratings order by avg_rating desc limit 10;
