@@ -8,7 +8,7 @@ regex=r'\S* - - \[.*\] \"(?P<request_method>\S*) (?P<request_url>\S*) (.*)'
 
 def extract_request_url(url):
 	compiled_regex=re.compile(regex)
-	results = complied_regex..match(url)
+	results = complied_regex.match(url)
 	return results.groupdict()["request_url"]
 
 if __name__ == "__main__":
