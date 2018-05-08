@@ -4,19 +4,12 @@ from pyspark import SparkContext
 from pyspark.streaming import StreamingContext
 from pyspark.streaming.flume import FlumeUtils
 
-regular_expression_parts = [
-	r'(?P<host>\S+)',
-	r'(\S+)',
-	r'(?P<user>\S+)',
-	r'\[(?P<time>.*)\]',
-	r'"(?P<request_method>\S+)"',
-	r'(?P<request_url>\S+)'
-]
+regex=r'\S* - - \[.*\] \"(?P<request_method>\S*) (?P<request_url>\S*) (.*)'
 
 def extract_request_url(url):
-	re.compile(r'\s+'.join(regular_expression_parts)+r'\s*\Z')
-	results = re.match(url)
-	return results.groupDict()["request_url"]
+	compiled_regex=re.compile(regex)
+	results = complied_regex..match(url)
+	return results.groupdict()["request_url"]
 
 if __name__ == "__main__":
 	sc = SparkContext(appName="Flume streaming application")
