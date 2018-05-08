@@ -2,7 +2,7 @@ import re
 
 from pyspark import SparkContext
 from pyspark.streaming import StreamingContext
-from pyspark.treaming.flume import FlumeUtils
+from pyspark.streaming.flume import FlumeUtils
 
 regular_expression_parts = [
 	r'(?P<host>\S+)',
