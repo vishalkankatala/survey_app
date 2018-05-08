@@ -29,8 +29,8 @@ if __name__ == "__main__":
 	
 	request_url_rdds = flumeStream.map(lambda x:x[1]).map(extract_request_url)
 	
-	aggregated_counts = request_url_rdds.map(lambda x: x,1).reduceByKeyAndWindow(lambda x,y:x+y, lambdax,y:x-y, 300,1)
-	
+	aggregated_counts = request_url_rdds.map(lambda x: x,1).reduceByKeyAndWindow(lambda x,y:x+y, lambda x,y:x-y, 300,1)	
+
 	sorted_results = aggregated_counts.transform(lambda rdd: rdd.sortBy(lambda x: x[1], False))
 	
 	sorted_results.pprint()
