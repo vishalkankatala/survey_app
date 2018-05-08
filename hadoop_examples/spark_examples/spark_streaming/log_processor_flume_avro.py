@@ -23,9 +23,9 @@ if __name__ == "__main__":
 
 	sc.setLogLevel("ERROR")
 
-	streaming_conext = StreamingContext(sc,1)
+	streaming_context = StreamingContext(sc,1)
 	
-	flumeStream = FlumeUtils.createStream(ssc,"localhost",9092)
+	flumeStream = FlumeUtils.createStream(streaming_context,"localhost",9092)
 	
 	request_url_rdds = flumeStream.map(lambda x:x[1]).map(extract_request_url)
 	
