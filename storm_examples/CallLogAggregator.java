@@ -11,22 +11,22 @@ import backtype.storm.topology.IRichBolt;
 import backtype.storm.topology.OutputFieldsDeclarer;
 
 public class CallLogAggregator implements IRichBolt{
+	
 	private OutputCollector collector;
 	private TopologyContext context;
-	private OutputCollector collector;
 	private HashMap<String,Integer> counts = new HashMap<String,Integer>();	
 
 	
 	@Override
-	public void prepare(Map<String> conf, TopologyContext context, OutputCollector collector){
+	public void prepare(Map conf, TopologyContext context, OutputCollector collector){
 		this.context=context;
 		this.collector = collector;
 	}
 	
 	@Override
 	public void execute(Tuple tuple){
-		String phoneCombination = tuple.get(0);
-		if(counts.hasKey(phoneCombination)){
+		String phoneCombination = tuple.getString(0);
+		if(this.counts.containsKey(phoneCombination)){
 			counts.put(phoneCombination, counts.get(phoneCombination)+1);
 		}else{
 			counts.put(phoneCombination,1);
@@ -35,19 +35,18 @@ public class CallLogAggregator implements IRichBolt{
 	} 
 
 	@Override
-	public void cleanUp(){
-		for(MapEntrySet<String,Integer> entrySet:counts.entrySet()){
+	public void cleanup(){
+		for(Map.Entry<String,Integer> entrySet:counts.entrySet()){
 			System.out.println("Phone Number Combination: : "+entrySet.getKey()+" Count: "+entrySet.getValue());
 		}
 	}
 	
 	@Override
-	public void declareOutputFields(OutputFieldDeclarator fieldDeclarator){
-		fieldDeclarator.declare(new Fields("call"));
+	public void declareOutputFields(OutputFieldsDeclarer fieldDeclarator){
 	}
-
+	
 	@Override
-	public Map<String,object> getComponentConfiguration(){
+	public Map<String,Object> getComponentConfiguration(){
 		return null;
 	}
 

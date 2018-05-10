@@ -1,17 +1,18 @@
-import java.util.*
+import java.util.*;
 
 import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Values;
 
 import backtype.storm.topology.IRichSpout;
-import backtype.storm.topology.OutputFieldseclarer;
+import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.spout.SpoutOutputCollector;
 import backtype.storm.task.TopologyContext;
 
 public class FakeCallReporter implements IRichSpout {
 	private SpoutOutputCollector collector;
 	private boolean completed=false;
-	private Random randomGenerator = Random();
+	private Random randomGenerator = new Random();
+	private TopologyContext context;
 
 	public void open(Map conf, TopologyContext context, SpoutOutputCollector collector){
 		this.collector=collector;
@@ -19,7 +20,6 @@ public class FakeCallReporter implements IRichSpout {
 	}
 
 	public void nextTuple(){
-		List<String> fromPhoneNumbers, toPhoneNumbers;
 		List<String> fromPhoneNumbers = new ArrayList<String>();
 		List<String> toPhoneNumbers = new ArrayList<String>();
 		fromPhoneNumbers.add("7032310212");
@@ -40,7 +40,7 @@ public class FakeCallReporter implements IRichSpout {
 		}
 	}
 	
-	public void declareOutputFields(OutputFieldDeclarer declarer){
+	public void declareOutputFields(OutputFieldsDeclarer declarer){
 		declarer.declare(new Fields("from","to","duration"));
 	}	
 	
