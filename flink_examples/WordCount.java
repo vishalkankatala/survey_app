@@ -4,6 +4,7 @@ import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.aggregation.Aggregations;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.utils.ParameterTool;
+import org.apache.flink.core.fs.FileSystem.WriteMode;
 
 import org.apache.flink.util.Collector;
 
@@ -19,7 +20,7 @@ public class WordCount{
 				.groupBy(0)
 				.aggregate(Aggregations.SUM,1);
 				
-		counts.writeAsText(params.get("output"));
+		counts.writeAsText(params.get("output"), WriteMode.OVERWRITE);
 		
 		env.execute("Word Count Sample");
 	}
